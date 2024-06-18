@@ -1,0 +1,43 @@
+server:
+  port: 80
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+        routes:
+          - id: customer-service
+            uri: lb://customer-service
+            predicates:
+              - Path=/api/customers/**
+            filters:
+              - name: AuthFilter
+          - id: product-service
+            uri: lb://product-service
+            predicates:
+              - Path=/api/products/**
+            filters:
+              - name: AuthFilter
+          - id: order-service
+            uri: lb://order-service
+            predicates:
+              - Path=/api/orders/**
+            filters:
+              - name: AuthFilter
+          - id: auth-service
+            uri: lb://auth-service
+            predicates:
+              - Path=/api/auth/**
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka
